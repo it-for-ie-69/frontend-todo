@@ -1,18 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import axios from "axios";
 
 // Define the type for a Todo item based on the database schema
-type Todo = {
-  id: number;
-  title: string;
-  completed: boolean;
-  created_at: string;
-};
-
-// Import base url from .env file
-const baseURL = import.meta.env.VITE_BASE_URL;
-console.log({ baseURL });
+type Todo = any;
 
 // Create a reactive reference to hold the list of todos
 const todos = ref<Todo[]>([]);
@@ -20,25 +10,16 @@ const todoText = ref("");
 const edit = ref(false);
 const currentTodo = ref<Todo | null>(null);
 
-async function fetchTodos() {
+function fetchTodos() {
   // supabase
   //   .from("todos")
   //   .select("*")
   //   .then((res) => {
   //     todos.value = res.data || [];
   //   });
-
-  // Promise way
-  // axios.get<Todo[]>(`${baseURL}/todos`).then((res) => {
-  //   todos.value = res.data;
-  // });
-
-  // Async-await way
-  const res = await axios.get<Todo[]>(`${baseURL}/todos`);
-  todos.value = res.data;
 }
 
-async function handleSubmitTodo() {
+function handleSubmitTodo() {
   if (!todoText.value) return;
 
   if (!edit.value) {
@@ -49,11 +30,6 @@ async function handleSubmitTodo() {
     //       fetchTodos();
     //       todoText.value = "";
     //     });
-    const res = await axios.post(`${baseURL}/todos`, {
-      title: todoText.value,
-    });
-    fetchTodos();
-    todoText.value = "";
   }
   if (edit.value && currentTodo.value) {
     // supabase
@@ -66,17 +42,10 @@ async function handleSubmitTodo() {
     //     edit.value = false;
     //     currentTodo.value = null;
     //   });
-    const res = await axios.patch(`${baseURL}/todos/${currentTodo.value.id}`, {
-      title: todoText.value,
-    });
-    fetchTodos();
-    todoText.value = "";
-    edit.value = false;
-    currentTodo.value = null;
   }
 }
 
-async function handleDeleteTodo(id: number) {
+function handleDeleteTodo(id: number) {
   // supabase
   //   .from("todos")
   //   .delete()
@@ -84,8 +53,6 @@ async function handleDeleteTodo(id: number) {
   //   .then(() => {
   //     fetchTodos();
   //   });
-  const res = await axios.delete(`${baseURL}/todos/${id}`);
-  fetchTodos();
 }
 
 function handleEditTodo(todo: Todo) {
